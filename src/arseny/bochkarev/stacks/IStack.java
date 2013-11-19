@@ -1,8 +1,8 @@
 package arseny.bochkarev.stacks;
 
-public interface IStack {
-    void push(Object e) throws StackOverflowError;
-    Object peek() throws StackOverflowError;
+public interface IStack<T> {
+    void push(T e) throws StackOverflowError;
+    T peek() throws StackOverflowError;
     void makeEmpty();
     boolean empty();
 }

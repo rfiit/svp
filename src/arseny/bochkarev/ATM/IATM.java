@@ -6,5 +6,5 @@ public interface IATM {
 
     void setCoins(int[] coins) throws Exception;
 
-    List<int[]> exchange(int value) throws Exception;
+    List<String> exchange(int value) throws Exception;
 }

@@ -1,8 +1,8 @@
 package arseny.bochkarev.stacks;
 
-public class Stack implements IStack {
+public class Stack<T> implements IStack<T>{
 
-    private Object[] stackbody;
+    private T[] stackbody;
     private int head, n;
 
     public Stack(int n) {
@@ -12,11 +12,11 @@ public class Stack implements IStack {
     private void init(int n) {
         head = 0;
         this.n = n;
-        stackbody = new Object[n];
+        stackbody = (T[])new Object[n];
     }
 
     @Override
-    public void push(Object e) throws StackOverflowError {
+    public void push(T e) throws StackOverflowError {
         if (head == n) {
             throw new StackOverflowError();
         }
@@ -25,12 +25,12 @@ public class Stack implements IStack {
     }
 
     @Override
-    public Object peek() throws StackOverflowError {
+    public T peek() throws StackOverflowError {
         if (head == 0) {
             throw new StackOverflowError();
         }
         head--;
-        Object e = stackbody[head];
+        T e = stackbody[head];
         stackbody[head] = null;
         return e;
     }

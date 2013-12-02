@@ -13,26 +13,30 @@ public class MyATM implements IATM {
     public void setCoins(int[] coins) throws Exception {
         this.coins = Arrays.copyOf(coins, coins.length);
         Arrays.sort(this.coins);
-        //p("MyATM.coins = " + Arrays.toString(this.coins));
     }
 
     @Override
     public List<String> exchange(int value) throws Exception {
+        if (coins == null) return null;
         List<String> result = new ArrayList<String>();
-        createCoinsExchange(result, value, coins, "");
+        createCoinsExchange(result, value, coins, null);
+
+        if (result.isEmpty()) return null; // решить что возвращать
+
         return result;
     }
 
-    private void createCoinsExchange(List<String> result, int currentvalue, int[] currentcoins, String currentresult) {
+    private void createCoinsExchange(List<String> result, int currentvalue, int[] currentcoins, int[] numbers) {
+        if (numbers == null) {
+            numbers = new int[currentcoins.length];
+        }
         if (currentvalue == 0) {
-            result.add(currentresult + ".");
+            result.add(coinNumbertoString(numbers));
             return;
         }
         if (currentcoins.length == 1) if (currentvalue % currentcoins[0] == 0) {
-            String assepted = currentresult + ", " +
-                    (currentvalue / currentcoins[0]) +
-                    " * " + currentcoins[0] + "_coin .";
-            result.add(assepted);
+            numbers[0] = currentvalue / currentcoins[0];
+            result.add(coinNumbertoString(numbers));
             return;
         } else {
             return;
@@ -40,14 +44,25 @@ public class MyATM implements IATM {
 
         int coinnumber = currentcoins.length-1;
         int coin = currentcoins[coinnumber];
-        int[] newcurrentcoins = Arrays.copyOfRange(currentcoins, 0, coinnumber-1);
+        int[] newcurrentcoins = Arrays.copyOfRange(currentcoins, 0, coinnumber);
+
         for (int i = 0; currentvalue - i * coin >= 0; i++) {
-            createCoinsExchange(result, currentvalue - i * coin, newcurrentcoins, currentresult + ", " + i + " * " + coin + "_coin");
+            int[] newnumbers = Arrays.copyOf(numbers, numbers.length);
+            newnumbers[coinnumber] = i;
+            createCoinsExchange(result, currentvalue - i * coin, newcurrentcoins, newnumbers);
         }
     }
 
     private String coinNumbertoString(int[] numbers) {
-        return null;
+        String assepted = "";
+        int summ = 0;
+        for (int i = 0; i < numbers.length; i++) {
+            summ += numbers[i] * coins[i];
+            assepted += (i > 0) ? ", " : "";
+            assepted += numbers[i] + " * " + coins[i] + "_coin";
+        }
+        assepted += "." + "["+ summ+"]";
+        return assepted;
     }
 
 

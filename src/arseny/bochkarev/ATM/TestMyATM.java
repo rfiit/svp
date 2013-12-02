@@ -10,9 +10,7 @@ public class TestMyATM {
         MyATM myatm = new MyATM();
         int[] coins = {4,7,6};
         myatm.setCoins(coins);
-        pln(Arrays.toString(coins));
-
-        List test = myatm.exchange(30);
+        List test = myatm.exchange(0);
         pList(test);
 
     }

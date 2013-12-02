@@ -5,7 +5,8 @@ public class Stack<T> implements IStack<T>{
     private T[] stackbody;
     private int head, n;
 
-    public Stack(int n) {
+    public Stack(int n) throws StackUnderflow {
+        if (n == 0) throw new StackUnderflow();
         init(n);
     }
 
@@ -16,18 +17,18 @@ public class Stack<T> implements IStack<T>{
     }
 
     @Override
-    public void push(T e) throws StackOverflowError {
+    public void push(T e) throws StackOverflow {
         if (head == n) {
-            throw new StackOverflowError();
+            throw new StackOverflow();
         }
         stackbody[head] = e;
         head++;
     }
 
     @Override
-    public T peek() throws StackOverflowError {
+    public T peek() throws StackUnderflow {
         if (head == 0) {
-            throw new StackOverflowError();
+            throw new StackUnderflow();
         }
         head--;
         T e = stackbody[head];

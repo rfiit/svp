@@ -15,7 +15,7 @@ public class Utilities {
     }
 
     public static void p(Object o) {
-        System.out.print(o.toString());
+        System.out.print(o);
     }
 
     public static void pln(Object o) {
@@ -23,6 +23,10 @@ public class Utilities {
     }
 
     public static void pList(List list) {
+        if (!(list instanceof List)) {
+            p(list);
+            return;
+        }
         Iterator it = list.listIterator();
         while (it.hasNext()) {
             pln(it.next());

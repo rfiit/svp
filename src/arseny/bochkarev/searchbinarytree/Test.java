@@ -31,6 +31,8 @@ public class Test {
 
         pln(st);
 
+        pln(st.checkTreeStructure());
+
     }
 }
 

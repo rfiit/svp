@@ -13,28 +13,11 @@ public class SearchBinaryTree<T extends Comparable<T>> {
     }   //+
 
     public void insertLeaf(T i) {
-//        if (root == null) {
-//            insertRoot(i);
-//            return;
-//        }
-//
-//        Node<T> cur = root;
-//        Node<T> par = root;
-//        while((cur != null) && (i.compareTo(cur.item) != 0)) {
-//            par = cur;
-//            cur = (i.compareTo(cur.item) > 0) ? cur.right : cur.left;
-//        }
-//        if(cur != null && cur.item.compareTo(i) == 0) {
-//            cur.item = i;
-//            return;
-//        }
-//        if (i.compareTo(par.item) < 0) {
-//            par.left = new Node(i);
-//        } else {
-//            par.right = new Node(i);
-//        }
-        insertNode(new Node(i));
-    }    //+
+        if (root == null)
+            insertRoot(i);
+        else
+            insertNode(new Node(i));
+    }
 
     public void insertRoot(T i) { //-
         if (root == null) {
@@ -59,6 +42,7 @@ public class SearchBinaryTree<T extends Comparable<T>> {
                 bufcurrent = current.left;
                 current.left = null;
             }
+//            disconnectNode(bufcurrent);
             insertNode(current);
             current = bufcurrent;
         }
@@ -76,27 +60,20 @@ public class SearchBinaryTree<T extends Comparable<T>> {
 
     public void remove(T i) {  //+
         Node<T> nd = searchNode(i);
-        Node<T> par = searchNodeParent(i);
-//        Worker<T> w = new Worker<T>() {
-//            public void work(Node<T> n) {
-//                SearchTree.this.insertLeaf(n.item);
-//            }
-//        };
-//        recursiveWork(nd.left, w);
-//        recursiveWork(nd.right, w);
         if (nd == null) return;
+
+        Node<T> par = searchNodeParent(nd);
 
         if (nd.right == null && nd.left == null) { // have not leaf
             removeNodeForce(nd);// can remove root
             return;
         }
-
         if (nd.right == null) {
-            replaceNode(nd, nd.left);
+            moveNode(nd, nd.left);
             return;
         }
         if (nd.left == null) {
-            replaceNode(nd, nd.right);
+            moveNode(nd, nd.right);
             return;
         }
 
@@ -106,12 +83,11 @@ public class SearchBinaryTree<T extends Comparable<T>> {
             cur = cur.left;
         }
         if (cur.right != null) {
-            replaceNode(cur, cur.right);
+            moveNode(cur, cur.right);
             nd.item = cur.item;
         } else {
-            T it = cur.item;
             removeNodeForce(cur);
-            nd.item = it;
+            nd.item = cur.item;
         }
 
     }  //+
@@ -121,12 +97,23 @@ public class SearchBinaryTree<T extends Comparable<T>> {
         return (cur == null) ? null : cur.item;
     } //+
 
+    public boolean checkTreeStructure() {
+        if (root == null) return true;
+        return recursiveCheckStructure(null, root);
+    }
+
 //    private void recursiveInsertLeaf(SearchTree st, Node<T> oldroot) {
 //        if (oldroot == null) return;
 //        st.insertLeaf(oldroot.item);
 //        st.recursiveInsertLeaf(st, oldroot.left);
 //        st.recursiveInsertLeaf(st, oldroot.right);
 //    }
+
+    private boolean recursiveCheckStructure(Node parent, Node child) {
+        return (child.parent == parent)
+            && (child.left == null ? true : (child.item.compareTo(child.left.item) > 0) && recursiveCheckStructure(child, child.left))
+            && (child.right == null ? true : (child.item.compareTo(child.right.item) < 0) && recursiveCheckStructure(child, child.right));
+    }
 
     private String recursiveToString(Node<T> nd) {
         if (nd == null) return "()";
@@ -155,34 +142,32 @@ public class SearchBinaryTree<T extends Comparable<T>> {
         return cur;
     } //+
 
-    private Node<T> searchNodeParent(T key) {
-        Node<T> cur = root;
-        Node<T> par = null;
-        while((cur != null) && (key.compareTo(cur.item) != 0)) {
-            par = cur;
-            cur = (key.compareTo(cur.item) > 0) ? cur.right : cur.left;
-        }
-        return (cur == null) ? null : par;
-    } //+
+//    private Node<T> searchNodeParent(T key) {
+//        Node<T> cur = root;
+////        Node<T> par = null;
+//        while((cur != null) && (key.compareTo(cur.item) != 0)) {
+////            par = cur;
+//            cur = (key.compareTo(cur.item) > 0) ? cur.right : cur.left;
+//        }
+//        return (cur == null) ? null : cur.parent;
+//    } //++
+
+    private Node<T> searchNodeParent(Node<T> node) {
+        return node == null ? null : node.parent;
+    } //++
 
     private void removeNodeForce(Node<T> nd) {
-        // предполагается, что элемент точно есть в дереве, иначе неправильная функциональность
-        Node<T> par = searchNodeParent(nd.item);
-        if (par == null) {
-            root = null;
-            return;
-        }
-        if (par.left == nd) par.left = null; else par.right = null;
+        disconnectNode(nd);
     } // +
 
-    private void replaceNode(Node<T> old, Node<T> nw) {
-        //перемещаемая нода не удаляется из дерева, если она в нем была
-        Node<T> par = searchNodeParent(old.item);
-        if (par == null) { // try to replace root
+    private void moveNode(Node<T> old, Node<T> nw) {
+        disconnectNode(nw);
+        if (old.parent == null) { // try to replace root
             root = nw;
             return;
         }
-        if (par.right == old) par.right = nw; else par.left = nw;
+        if (old.parent.right == old) old.parent.right = nw; else old.parent.left = nw;
+        nw.parent = old.parent;
     } //+
 
     private void recursiveWork(Node<T> node, Worker<T> worker) {
@@ -193,14 +178,10 @@ public class SearchBinaryTree<T extends Comparable<T>> {
     }
 
     private void insertNode(Node<T> node) {
-        if (root == null) {
-            this.root = node;
-            return;
-        }
 
         T i = node.item;
         Node<T> cur = root;
-        Node<T> par = root;
+        Node<T> par = null;
         while((cur != null) && (i.compareTo(cur.item) != 0)) {
             par = cur;
             cur = (i.compareTo(cur.item) > 0) ? cur.right : cur.left;
@@ -216,12 +197,31 @@ public class SearchBinaryTree<T extends Comparable<T>> {
         } else {
             par.right = node;
         }
+        node.parent = par;
+    }
+
+    private Node<T> disconnectNode(Node<T> node) {
+        if (node.parent == null) return node;
+        if (node.parent.left == node) node.parent.left = null; else node.parent.right = null;
+        node.parent = null;
+        return node;
+    }
+
+    // parent & child != null and compareTo != 0
+    private void connectNodes(Node<T> parent, Node<T> child) {
+        if (parent == null || child == null) return;
+        if (parent.item.compareTo(child.item) > 0)
+            parent.left = child;
+        else
+            parent.right = child;
+        child.parent = parent;
     }
 }
 
 class Node<T extends Comparable<T>> {
     Node left;
     Node right;
+    Node parent;
     T item;
     Node(T i) {
         item = i;

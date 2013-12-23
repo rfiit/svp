@@ -13,11 +13,13 @@ public class MyATM implements IATM {
     public void setCoins(int[] coins) throws Exception {
         this.coins = Arrays.copyOf(coins, coins.length);
         Arrays.sort(this.coins);
+        if(this.coins[0] <= 0) throw new Exception("Invalid coins");
     }
 
     @Override
     public List<String> exchange(int value) throws Exception {
         if (coins == null) return null;
+        if(value < 0) throw new Exception("Invalid value.");
         List<String> result = new ArrayList<String>();
         createCoinsExchange(result, value, coins, null);
 

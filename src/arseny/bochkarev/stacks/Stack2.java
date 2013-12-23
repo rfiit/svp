@@ -4,7 +4,7 @@ public class Stack2<T> implements IStack<T>{
 
     Element<T> tail;
 
-    public Stack2() throws StackUnderflow {
+    public Stack2(){// throws StackUnderflow {
         init();
     }
 
@@ -13,15 +13,15 @@ public class Stack2<T> implements IStack<T>{
     }
 
     @Override
-    public void push(T e) throws StackOverflow {
+    public void push(T e){// throws StackOverflow {
         Element ne = new Element(tail, e);
         tail = ne;
     }
 
     @Override
-    public T peek() throws StackUnderflow {
+    public T peek(){// throws StackUnderflow {
         if (tail == null) {
-            throw new StackUnderflow();
+            return null;//throw new StackUnderflow();
         }
         T e = tail.getValue();
         tail = tail.getPrevious();
@@ -31,6 +31,11 @@ public class Stack2<T> implements IStack<T>{
     @Override
     public void makeEmpty() {
         init();
+    }
+
+    @Override
+    public T show() {
+        return tail.getValue();
     }
 
     @Override

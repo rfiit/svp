@@ -13,6 +13,7 @@ public class SearchBinaryTree<T extends Comparable<T>> {
     }   //+
 
     public void insertLeaf(T i) {
+        if (i == null) return;
         if (root == null)
             insertRoot(i);
         else
@@ -20,6 +21,7 @@ public class SearchBinaryTree<T extends Comparable<T>> {
     }
 
     public void insertRoot(T i) { //-
+        if (i == null) return;
         if (root == null) {
             root = new Node(i);
             return;
@@ -56,9 +58,10 @@ public class SearchBinaryTree<T extends Comparable<T>> {
 //        recursiveWork(oldroot, w);
 
 //        recursiveInsertLeaf(this, oldroot);
-    }  //??
+    }  //+
 
     public void remove(T i) {  //+
+        if (i == null) return;
         Node<T> nd = searchNode(i);
         if (nd == null) return;
 
@@ -115,13 +118,13 @@ public class SearchBinaryTree<T extends Comparable<T>> {
             && (child.right == null ? true : (child.item.compareTo(child.right.item) < 0) && recursiveCheckStructure(child, child.right));
     }
 
-    private String recursiveToString(Node<T> nd) {
-        if (nd == null) return "()";
-        String s =  nd.item.toString() + " - ";
-        s += "[" + recursiveToString(nd.left) + "]:";
-        s += "[" + recursiveToString(nd.right) + "]";
-        return s;
-    }
+//    private String recursiveToString(Node<T> nd) {
+//        if (nd == null) return "()";
+//        String s =  nd.item.toString() + " - ";
+//        s += "[" + recursiveToString(nd.left) + "]:";
+//        s += "[" + recursiveToString(nd.right) + "]";
+//        return s;
+//    }
 
     private String recursiveToString(Node<T> nd, String indent) {
         if (nd == null) return "()|\n";
@@ -135,6 +138,7 @@ public class SearchBinaryTree<T extends Comparable<T>> {
     }
 
     private Node<T> searchNode(T key) {
+        if (key == null) return null;
         Node<T> cur = root;
         while((cur != null) && (key.compareTo(cur.item) != 0)) {
             cur = (key.compareTo(cur.item) > 0) ? cur.right : cur.left;
@@ -170,12 +174,12 @@ public class SearchBinaryTree<T extends Comparable<T>> {
         nw.parent = old.parent;
     } //+
 
-    private void recursiveWork(Node<T> node, Worker<T> worker) {
-        if (node == null) return;
-        worker.work(node);
-        recursiveWork(node.left, worker);
-        recursiveWork(node.right, worker);
-    }
+//    private void recursiveWork(Node<T> node, Worker<T> worker) {
+//        if (node == null) return;
+//        worker.work(node);
+//        recursiveWork(node.left, worker);
+//        recursiveWork(node.right, worker);
+//    }
 
     private void insertNode(Node<T> node) {
 
@@ -231,7 +235,7 @@ class Node<T extends Comparable<T>> {
     }
 }
 
-interface Worker<T extends Comparable<T>> {
-    void work(Node<T> node);
-    //void work(Node<T> node, String s);
-}
+//interface Worker<T extends Comparable<T>> {
+//    void work(Node<T> node);
+//    //void work(Node<T> node, String s);
+//}

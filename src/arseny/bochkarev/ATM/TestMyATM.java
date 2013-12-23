@@ -7,10 +7,10 @@ import static arseny.bochkarev.util.Utilities.*;
 
 public class TestMyATM {
     public static void main(String[] args) throws Exception{
-        MyATM myatm = new MyATM();
-        int[] coins = {4,7,6};
+        IATM myatm = new MyATM();
+        int[] coins = {-40,7,6};
         myatm.setCoins(coins);
-        List test = myatm.exchange(0);
+        List test = myatm.exchange(-500);
         pList(test);
 
     }
